@@ -1,7 +1,7 @@
 Keuron.py
 
 ***********************************
-create(inputnum,layer, weight1, weight2)
+create(inputnum, layer, weight1, weight2)
 # 입력값 갯수, 가중치범위1~가중치범위2
 # create하면 자동으로 inputnum*layer 만큼 뉴런 생성되고 연결되어 네트워크가 구성된다.
 
@@ -22,6 +22,7 @@ k
 0 역치값
 1 가중치
 2:inputnum+2 입력
+inputnum+3 출력값
 }
 
 ***********************************
