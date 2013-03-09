@@ -3,7 +3,7 @@ Keuron.py
 ***********************************
 create(inputnum,layer, weight1, weight2)
 # 입력값 갯수, 가중치범위1~가중치범위2
-# create하면 자동으로 inputnum^layer 만큼 뉴런 생성되고 연결되어 네트워크가 구성된다.
+# create하면 자동으로 inputnum*layer 만큼 뉴런 생성되고 연결되어 네트워크가 구성된다.
 
 free()
 # 구성된 네트워크를 해제한다.
@@ -16,6 +16,12 @@ recall(name, in_flag, path(opt))
 
 --struct--
 #이름만 구조체, 실상은 리스트
-k[][]=2차원 배열이다.a(i,j)에서 i는 layer 계층, j는 뉴런고유index
+k[][]=2차원 배열이다.k(i,j)에서 i는 layer 계층, j는 뉴런고유index
+k
+{
+0 역치값
+1 가중치
+2:inputnum+2 입력
+}
 
 ***********************************
