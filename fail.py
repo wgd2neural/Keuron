@@ -101,12 +101,8 @@ def fix(l_input,l_answer,l_hidden,l_output,l_nn,alpha = 0.1):
             sum = sum + error_out[tmp] * l_nn[1][tmp][x]
         error_hidden = error_out[x] * (1 - error_out[x]) * sum
         print 'error_hidden -> ',error_hidden
-        for y in range(len(
-            
-            
-            
-            
-        error_hidden = l_hidden[x] * (1 - l_hidden[x])
+        for y in range(len(error_hidden = l_hidden[x] * (1 - l_hidden[x]):
+            #여기서부터 fail....
         
 
     
