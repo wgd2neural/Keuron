@@ -1,0 +1,136 @@
+# -*- coding: cp949 -*-
+from __future__ import division
+import math
+import random
+import pprint
+random.seed()
+
+def sigmoid(a):
+    #시그모이드 함수로 tanh 함수 사용
+    return math.tanh(a)
+
+#시그모이드 함수의 미분함수
+def dsigmoid(y):
+    return 1.0 - y**2
+
+def rand(a, b):
+    # a <= rand < b
+    return (b-a)*random.random() + a
+
+def makeMatrix(J, I, fill=0.0):
+    m = []
+    for i in range(I):
+        m.append([fill]*J)
+    return m
+
+class nn:
+    def __init__(self,ni,nh,no):
+        #입력수,히든수,출력수
+        self.ni=ni+1
+        self.nh=nh
+        self.no=no
+
+        self.ah=[1.0]*self.nh
+        self.ao=[1.0]*self.no
+
+        self.wh=makeMatrix(self.ni,self.nh)
+        self.wo=makeMatrix(self.nh,self.no)
+        
+        for x in range(self.nh):
+            for y in range(self.ni):
+                self.wh[x][y] = rand(-2.0, 2.0)
+        for x in range(self.no):
+            for y in range(self.nh):
+                self.wo[x][y] = rand(-0.2, 0.2)
+                
+        self.ch = makeMatrix(self.ni, self.nh)
+        self.co = makeMatrix(self.nh, self.no)
+
+    def calc(self,l_input):
+        #입력값에 대한 출력값 계산
+        if len(l_input) is not self.ni-1:
+            print 'error',2
+            exit()
+        #히든 레이어의 activation 구함
+        l_input=l_input+[1.0]
+        self.ai=[]
+        for x in l_input:
+            self.ai = self.ai + [x]
+        for x in range(self.nh):
+            sum=0
+            for y in range(self.ni):
+                sum = sum + self.wh[x][y]*l_input[y]
+            self.ah[x]=sigmoid(sum)
+
+        #출력 레이어의 activation(=출력값)을 구함
+        for x in range(self.no):
+            sum=0
+            for y in range(self.nh):
+                sum = sum + self.wo[x][y]*self.ah[y]
+            self.ao[x]=sigmoid(sum)
+        return self.ao
+
+    def test(self, l_inputs):
+        for p in l_inputs:
+            print(p[0], '->', self.calc(p[0]))
+
+    def backPropagate(self, targets, N, M):
+        if len(targets) != self.no:
+            raise ValueError('wrong number of target values')
+
+        #히든-출력 에러 계산
+        output_deltas = [0.0] * self.no
+        for k in range(self.no):
+            error = targets[k]-self.ao[k]
+            output_deltas[k] = dsigmoid(self.ao[k]) * error
+
+        #입력-출력 에러 계산
+        hidden_deltas = [0.0] * self.nh
+        for j in range(self.nh):
+            error = 0.0
+            for k in range(self.no):
+                error = error + output_deltas[k]*self.wo[k][j]
+            hidden_deltas[j] = dsigmoid(self.ah[j]) * error
+
+        #히든-출력 에러 수정
+        for j in range(self.nh):
+            for k in range(self.no):
+                change = output_deltas[k]*self.ah[j]
+                self.wo[k][j] = self.wo[k][j] + N*change + M*self.co[k][j]
+                self.co[k][j] = change
+                
+        #입력-히든 에러 수정
+        for i in range(self.ni):
+            for j in range(self.nh):
+                change = hidden_deltas[j]*self.ai[i]
+                self.wh[j][i] = self.wh[j][i] + N*change + M*self.ch[j][i]
+                self.ch[j][i] = change
+                
+        #예상 출력과 실제 출력 사이 에러 계산
+        error = 0.0
+        for k in range(len(targets)):
+            error = error + 0.5*(targets[k]-self.ao[k])**2
+        return error
+    
+    def train(self, patterns, iterations=1000, N=0.5, M=0.1):
+        # N: learning rate
+        # M: momentum factor
+        for i in range(iterations):
+            error = 0.0
+            for p in patterns:
+                inputs = p[0]
+                targets = p[1]
+                self.calc(inputs)
+                error = error + self.backPropagate(targets, N, M)
+            if i % 100 == 0:
+                print('error %-.6f' % error)
+
+a=nn(2,3,1)
+pat = [
+    [[0,0], [1]],
+    [[0,1], [0]],
+    [[1,0], [0]],
+    [[1,1], [1]]
+]
+a.train(pat)
+a.test(pat)
