@@ -8,8 +8,11 @@ create(inputnum,layer, weight1, weight2)
 free()
 # 구성된 네트워크를 해제한다.
 
-rmlayer()
-# 최하위 레이어를 삭제한다.
+memorize(name, out_flag, path(opt))
+# 모든 각각의 뉴런의 가중치를 name에 리스트로 저장핟. flag가 1이면 외부출력한다.
+
+recall(name, in_flag, path(opt))
+# memorize 되있던 가중치값을 모든 각각의 뉴런에 부여한다. 기존 가중치 정보는 사라진다.
 
 --struct--
 #이름만 구조체, 실상은 리스트
